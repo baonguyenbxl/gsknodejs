@@ -40,31 +40,4 @@ export interface RouteFunction
     callback: Function;
 
 }
-export const statusTxt: ReturnStatus = {
-    ok: "OK",
-    error: "Error execution",
-    dataerror: "Database request failed"
-}
 
-export const ResponseGood = ( d: Object ) =>
-{
-    return {
-        code: 200,
-        data: d,
-        message: "🏠"
-    }
-}
-export const ResponseBadData = (  ) =>
-{
-    return {
-        code: 991,
-        message: statusTxt.dataerror
-    }
-}
-export const ResponseFailed = (  ) =>
-{
-    return {
-        code: 992,
-        message: statusTxt.error
-    }
-}

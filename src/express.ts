@@ -4,13 +4,14 @@ import 'dotenv/config';
 import { FunctionResponse, RequestInfos, ReturnStatus, RouteFunction, AppRoutes, ResponseGood, ResponseInfos, ResponseBadData, ResponseFailed } from './defines';
 import { DataRequest } from './functions';
 
+
 const appip = process.env.APPIP || 'localhost',
     appport = Number( process.env.PORT ) || 5656;
 
 
 const approutes: AppRoutes = [
     {
-        name: "/routea",
+        payload: "/routea",
         callback: DataRequest
     } ];
 /**
@@ -49,7 +50,7 @@ app.all( '*', ( req, res) =>
     for ( let i = 0, len = approutes.length; i < len; i++ )
     {
         const route = approutes[ i ];
-        if ( reqinfos.path === route.name )
+        if ( reqinfos.path === route.payload )
         {
             resp = route.callback();
             let result: ResponseInfos = ResponseGood( reqinfos );
@@ -57,7 +58,6 @@ app.all( '*', ( req, res) =>
             return;
         }
     }
-
     res.status( ResponseBadData().code ).send( ResponseBadData().message );
 } )
 
