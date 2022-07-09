@@ -6,15 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 require("dotenv/config");
-const defines_1 = require("./defines");
+const data_1 = require("./data");
 const functions_1 = require("./functions");
 const appip = process.env.APPIP || 'localhost', appport = Number(process.env.PORT) || 5656;
-const approutes = [
-    {
-        name: "/routea",
-        callback: functions_1.DataRequest
-    }
-];
 /**
  * New "application" express
  */
@@ -33,26 +27,15 @@ app.use((0, cors_1.default)());
  * All routes
  */
 app.all('*', (req, res) => {
-    const reqinfos = {
-        path: req.path,
-        method: req.method,
-        ip: req.ip,
-        params: req.params,
-        body: req.body,
-        query: req.query,
-        headers: req.headers
-    };
-    let resp;
-    for (let i = 0, len = approutes.length; i < len; i++) {
-        const route = approutes[i];
-        if (reqinfos.path === route.name) {
-            resp = route.callback();
-            let result = (0, defines_1.ResponseGood)(reqinfos);
-            res.status(result.code).send(result.data);
-            return;
-        }
+    const reqinfos = (0, functions_1.ReqInfos)(req);
+    const payload = (0, functions_1.getPayload)(reqinfos.path);
+    if (payload !== "" && data_1.payloads[payload]) {
+        const result = (0, data_1.ResponseGood)(reqinfos);
+        res.status(result.code).send(result.data);
+        return;
     }
-    res.status((0, defines_1.ResponseBadData)().code).send((0, defines_1.ResponseBadData)().message);
+    const bad = (0, data_1.ResponseBadData)();
+    res.status(bad.code).send(bad.message);
 });
 /**
  * list on port and ip

@@ -1,19 +1,15 @@
 import cors from 'cors'
 import express from 'express'
 import 'dotenv/config';
-import { FunctionResponse, RequestInfos, ReturnStatus, RouteFunction, AppRoutes, ResponseGood, ResponseInfos, ResponseBadData, ResponseFailed } from './defines';
-import { DataRequest } from './functions';
-
+import {  RequestInfos, ResponseInfos } from './defines';
+import { ResponseGood, ResponseBadData, ResponseFailed, payloads } from './data';
+import { DataRequest, getPayload, ReqInfos } from './functions';
 
 const appip = process.env.APPIP || 'localhost',
     appport = Number( process.env.PORT ) || 5656;
 
 
-const approutes: AppRoutes = [
-    {
-        payload: "/routea",
-        callback: DataRequest
-    } ];
+
 /**
  * New "application" express
  */
@@ -37,28 +33,16 @@ app.use( cors() )
  */
 app.all( '*', ( req, res) =>
 {
-    const reqinfos: RequestInfos = {
-        path: req.path,
-        method: req.method,
-        ip: req.ip,
-        params: req.params,
-        body: req.body,
-        query: req.query,
-        headers: req.headers
-    };
-    let resp: FunctionResponse;
-    for ( let i = 0, len = approutes.length; i < len; i++ )
+    const reqinfos: RequestInfos = ReqInfos( req );
+    const payload: string = getPayload( reqinfos.path );
+    if ( payload!=="" && payloads[ payload ] )
     {
-        const route = approutes[ i ];
-        if ( reqinfos.path === route.payload )
-        {
-            resp = route.callback();
-            let result: ResponseInfos = ResponseGood( reqinfos );
-            res.status( result.code ).send( result.data );
-            return;
-        }
+        const result: ResponseInfos = ResponseGood( reqinfos );
+        res.status( result.code ).send( result.data );
+        return;        
     }
-    res.status( ResponseBadData().code ).send( ResponseBadData().message );
+    const bad:ResponseInfos = ResponseBadData();
+    res.status( bad.code ).send( bad.message );
 } )
 
 

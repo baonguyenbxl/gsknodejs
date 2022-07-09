@@ -11,6 +11,11 @@ export interface RequestInfos
     params?: Object;
 }
 
+export interface Payloads
+{
+    [ key: string ]: RouteFunction;
+}
+
 export interface ResponseInfos
 {
     code: number;
@@ -33,11 +38,13 @@ export interface FunctionResponse
     message?: string;
 }
 
-export type AppRoutes = Array<RouteFunction>;
 export interface RouteFunction
 {
-    name: string;
-    callback: Function;
-
+    payload: string;
+    get?: Function;
+    post?: Function;
+    put?: Function;
+    delete?: Function;
 }
+
 

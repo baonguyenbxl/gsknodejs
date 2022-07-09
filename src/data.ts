@@ -1,4 +1,6 @@
-import { ReturnStatus, ResponseInfos } from "./defines";
+import { ReturnStatus, ResponseInfos , Payloads} from "./defines";
+import http from "http";
+import { DataRequest } from "./functions";
 export const statusTxt: ReturnStatus = {
     ok: "OK",
     error: "Error execution",
@@ -7,7 +9,7 @@ export const statusTxt: ReturnStatus = {
 
 export const ResponseGood = ( d: Object ) =>
 {
-    let resp:ResponseInfos= {
+    let resp: ResponseInfos = {
         code: 200,
         data: d,
         message: "🏠"
@@ -29,4 +31,17 @@ export const ResponseFailed = () =>
         message: statusTxt.error
     }
     return resp;
+}
+
+
+
+export const payloads:Payloads = {
+    "routea": {
+        payload: "/routea",
+        get:DataRequest
+    },
+    "routeb": {
+        payload: "/routeb",
+        get: DataRequest
+    }
 }
